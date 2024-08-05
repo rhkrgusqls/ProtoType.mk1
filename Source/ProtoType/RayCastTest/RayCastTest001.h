@@ -15,6 +15,6 @@ class PROTOTYPE_API ARayCastTest001 : public AMyCharacter
 	GENERATED_BODY()
 	virtual void Tick(float DeltaTime)override;
 
-	void RayCastTest(UObject* WorldContextObject, USkeletalMeshComponent* SkeletalMesh, const FVector& StartLocation, const FVector& EndLocation);
+	void RayCast(UObject* WorldContextObject, const FVector& StartLocation, const FVector& EndLocation);
 	void ChangeMaterialRGB(USkeletalMeshComponent* SkeletalMesh, FName BoneName, FLinearColor NewColor);
 };
