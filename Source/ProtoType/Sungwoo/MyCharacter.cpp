@@ -7,6 +7,10 @@
 #include "EnhancedInputComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Engine/World.h"
+#include "DrawDebugHelpers.h"
+
+
 
 // Sets default values
 AMyCharacter::AMyCharacter()
@@ -125,7 +129,7 @@ void AMyCharacter::QuaterMove(const FInputActionValue& Value)
 		{
 			FRotator NewRotation = PlayerController->GetControlRotation();
 			NewRotation.Yaw += MovementVector.X;
-			NewRotation.Pitch = FMath::Clamp(NewRotation.Pitch + MovementVector.Y, -89.0f, 60.0f);
+			NewRotation.Pitch = FMath::Clamp(NewRotation.Pitch + MovementVector.Y, -89.0f, 0.0f);
 			PlayerController->SetControlRotation(NewRotation);
 
 			FString DebugMessage = FString::Printf(TEXT("Look with Right Click (%f:%f)"), MovementVector.X, MovementVector.Y);
@@ -160,7 +164,7 @@ void AMyCharacter::OnRightClick(const FInputActionValue& Value)
 
 void AMyCharacter::UpDown(const FInputActionValue& Value)
 {
-	float Height =FMath::Clamp(GetActorLocation().Z * 0.2,0,500);
+	float Height =FMath::Clamp(GetActorLocation().Z * 0.05,0,1000);
 	float Power = Value.Get<float>();
 	FVector CurrentLocation = GetActorLocation();
 	FVector NewLocation = CurrentLocation + FVector(0.0f, 0.0f, Power * Height); // 이동 속도를 조정합니다.
@@ -175,4 +179,73 @@ void AMyCharacter::UpDown(const FInputActionValue& Value)
 
 
 }
+
+FViewLocation AMyCharacter::GetCornerPoints()
+{
+	APlayerController* PlayerController = Cast<APlayerController>(Controller);
+	if (!PlayerController)
+	{
+		return FViewLocation();
+
+	}
+	FViewLocation ViewLocation;
+
+	// 화면 모서리 좌표
+	const FVector2D ScreenCorners[4] = {
+		FVector2D(0, 0), // Left-up
+		FVector2D(0, GEngine->GameViewport->Viewport->GetSizeXY().Y), // Left-down
+		FVector2D(GEngine->GameViewport->Viewport->GetSizeXY().X, 0), // Right-up
+		FVector2D(GEngine->GameViewport->Viewport->GetSizeXY().X, GEngine->GameViewport->Viewport->GetSizeXY().Y) // Right-down
+	};
+
+	FHitResult HitResult;
+	FVector WorldLocation;
+	FVector WorldDirection;
+
+	// 각 화면 모서리에 대해 처리
+	for (int32 i = 0; i < 4; i++)
+	{
+		if (PlayerController->DeprojectScreenPositionToWorld(ScreenCorners[i].X, ScreenCorners[i].Y, WorldLocation, WorldDirection))
+		{
+			// 바닥과의 교차점을 찾기 위해 라인 트레이스 수행
+			FVector Start = WorldLocation;
+			FVector End = WorldLocation + (WorldDirection * 1000000.0f); // 충분히 긴 거리
+
+			// 라인 트레이스, 바닥 오브젝트만 대상으로
+			if (GetWorld()->LineTraceSingleByObjectType(
+				HitResult,
+				Start,
+				End,
+				FCollisionObjectQueryParams(ECollisionChannel::ECC_WorldStatic)
+			))
+			{
+				// 히트 결과를 저장
+				switch (i)
+				{
+				case 0 :
+					ViewLocation.LeftUp = FVector2D(HitResult.Location);
+					break;
+				case 1:
+					ViewLocation.LeftDown = FVector2D(HitResult.Location);
+					break;
+				case 2:
+					ViewLocation.RightUp = FVector2D(HitResult.Location);
+					break;
+				case 3:
+					ViewLocation.RightDown = FVector2D(HitResult.Location);
+					break;
+				default:
+					break;
+				}
+
+				// 디버그 라인 그리기
+				DrawDebugLine(GetWorld(), Start, HitResult.Location, FColor::Red, false, 5.0f, 0, 1.0f);
+				DrawDebugPoint(GetWorld(), HitResult.Location, 10.0f, FColor::Green, false, 5.0f);
+			}
+		}
+	}
+	return ViewLocation;
+}
+
+
 
