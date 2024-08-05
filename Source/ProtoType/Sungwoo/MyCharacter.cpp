@@ -164,7 +164,7 @@ void AMyCharacter::OnRightClick(const FInputActionValue& Value)
 
 void AMyCharacter::UpDown(const FInputActionValue& Value)
 {
-	float Height =FMath::Clamp(GetActorLocation().Z * 0.05,0,1000);
+	float Height =FMath::Clamp(GetActorLocation().Z * 0.1,0,1000);
 	float Power = Value.Get<float>();
 	FVector CurrentLocation = GetActorLocation();
 	FVector NewLocation = CurrentLocation + FVector(0.0f, 0.0f, Power * Height); // 이동 속도를 조정합니다.
