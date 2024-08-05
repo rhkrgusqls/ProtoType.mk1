@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "ViewLocationStruct.h"
 #include "MyCharacter.generated.h"
 
 UCLASS()
@@ -37,6 +38,8 @@ protected:
 	void OnRightClick(const FInputActionValue& Value);
 	void UpDown(const FInputActionValue& Value);
 
+	UFUNCTION(BlueprintCallable, Category = "View")
+	FViewLocation GetCornerPoints();
 public:
 	// Sets default values for this character's properties
 	AMyCharacter();
@@ -56,5 +59,6 @@ public:
 private:
 	bool bIsLeftClicking;
 	bool bIsRightClicking;
+
 
 };
