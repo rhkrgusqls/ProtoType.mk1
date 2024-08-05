@@ -92,6 +92,9 @@ void AMyCharacter::QuaterMove(const FInputActionValue& Value)
 		// 좌클릭 상태에서의 이동 처리
 		if (Camera)
 		{
+
+			float Height = FMath::Clamp(GetActorLocation().Z * 0.005, 0, 500);
+
 			FVector CameraForward = Camera->GetForwardVector();
 			FVector CameraRight = Camera->GetRightVector();
 
@@ -99,7 +102,11 @@ void AMyCharacter::QuaterMove(const FInputActionValue& Value)
 			MoveDirection.Z = 0.0f;
 
 			FVector CurrentLocation = GetActorLocation();
-			AddMovementInput(MoveDirection, MovementVector.Size());
+			FVector NewLocation = CurrentLocation + (MoveDirection * Height);
+
+			SetActorLocation(NewLocation, true);
+
+			//AddMovementInput(MoveDirection, MovementVector.Size());
 
 
 			FString DebugMessage = FString::Printf(TEXT("Move with Left Clicks (%f:%f)"), MovementVector.X, MovementVector.Y);
