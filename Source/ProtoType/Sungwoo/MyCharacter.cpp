@@ -244,7 +244,13 @@ FViewLocation AMyCharacter::GetCornerPoints()
 			}
 		}
 	}
+	GetPoint(ViewLocation.LeftUp, ViewLocation.LeftDown, ViewLocation.RightUp, ViewLocation.RightDown);
 	return ViewLocation;
+}
+
+void AMyCharacter::GetPoint(FVector2D LU, FVector2D LD, FVector2D RU, FVector2D RD)
+{
+
 }
 
 

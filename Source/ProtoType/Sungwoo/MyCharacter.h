@@ -42,6 +42,8 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "View")
 	FViewLocation GetCornerPoints();
+
+	virtual void GetPoint(FVector2D LU, FVector2D LD, FVector2D RU, FVector2D RD);
 public:
 	// Sets default values for this character's properties
 	AMyCharacter();
@@ -61,6 +63,8 @@ public:
 private:
 	bool bIsLeftClicking;
 	bool bIsRightClicking;
+
+
 
 
 };
