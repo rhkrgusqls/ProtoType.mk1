@@ -6,7 +6,8 @@
 struct SSelectorType
 {
     int Type = 0;
-    std::vector<int> Elemental;
+    int MaxElIndex = 0;
+    float Elemental[8];
     int error = 0;
 };
 

@@ -4,12 +4,11 @@
 #include "GameFramework/Actor.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
-
+#include "ProtoType/ClientModule/TCPModule.h"
 
 void ARayCastTest001::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
-    RayCast(GetWorld(),GetActorLocation(),GetActorLocation()+GetActorForwardVector()*2000);
 }
 
 void ARayCastTest001::RayCast(UObject* WorldContextObject, const FVector& StartLocation, const FVector& EndLocation)

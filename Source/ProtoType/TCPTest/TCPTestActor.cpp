@@ -18,12 +18,12 @@ ATCPTestActor::ATCPTestActor()
 void ATCPTestActor::BeginPlay()
 {
 	Super::BeginPlay();
-	TCPModule& MyTCPModule = TCPModule::GetInstance();
-	MyTCPModule.TCPCunnect();
-	for (const auto& item : MyTCPModule.GetAPData()) {
+	//TCPModule& MyTCPModule = TCPModule::GetInstance();
+	//MyTCPModule.TCPCunnect();
+	/*for (const auto& item : MyTCPModule.GetAPData()) {
 		UE_LOG(LogTemp, Warning, TEXT("%d"), item.ApartIndex);
 
-	}
+	}*/
 }
 
 // Called every frame

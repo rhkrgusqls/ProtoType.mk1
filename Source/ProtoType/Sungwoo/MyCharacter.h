@@ -6,7 +6,9 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "ViewLocationStruct.h"
+#include "ProtoType/ClientModule/TCPModule.h"
 #include "MyCharacter.generated.h"
+
 
 UCLASS()
 class PROTOTYPE_API AMyCharacter : public ACharacter
@@ -43,7 +45,7 @@ protected:
 public:
 	// Sets default values for this character's properties
 	AMyCharacter();
-
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -55,7 +57,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-
+	TCPModule& MyTCPModule = TCPModule::GetInstance();
 private:
 	bool bIsLeftClicking;
 	bool bIsRightClicking;

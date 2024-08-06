@@ -11,7 +11,6 @@
 #include "DrawDebugHelpers.h"
 
 
-
 // Sets default values
 AMyCharacter::AMyCharacter()
 {
@@ -43,7 +42,8 @@ AMyCharacter::AMyCharacter()
 void AMyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	MyTCPModule.TCPCunnect();
 }
 
 // Called every frame

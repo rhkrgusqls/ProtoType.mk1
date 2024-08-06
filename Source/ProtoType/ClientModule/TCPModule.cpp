@@ -6,6 +6,10 @@
 #include<iostream>
 #include<Winsock2.h>
 #include<vector>
+
+#include <thread>
+#include <chrono>
+
 #pragma comment(lib, "ws2_32.lib")
 
 #define PORT	4960
@@ -14,35 +18,56 @@
 DEFINE_LOG_CATEGORY_STATIC(MyLogCategory, Warning, All);
 
 
-std::vector<APData> TCPModule::GetAPData()
+std::vector<APData> TCPModule::GetAPData(std::vector<float> Elemental)
 {
 	SSelectorType Selector;
 	Selector.Type = 1;
-	Selector.Elemental.push_back(1);
 
-	Selector.Elemental.push_back(2);
+	Selector.Elemental[0] = Elemental[0];
+	Selector.Elemental[1] = Elemental[1];
 
-	Selector.Elemental.push_back(3);
+	Selector.Elemental[2] = Elemental[2];
+	Selector.Elemental[3] = Elemental[3];
 
-	Selector.Elemental.push_back(4);
+	Selector.Elemental[4] = Elemental[4];
+	Selector.Elemental[5] = Elemental[5];
+
+	Selector.Elemental[6] = Elemental[6];
+	Selector.Elemental[7] = Elemental[7];
+
+	Selector.MaxElIndex = 8;
+
 	std::vector<APData> VAP;
 	len = sizeof(Selector);
 	APData AP;
 	int APSize;
-	send(s, (char*)&Selector, len, 0);
+	//--Recive001--Complite
+	send(s, (char*)&Selector.Type, len, 0);
 	
+	//--Recive002
+	send(s, (char*)&Selector.MaxElIndex, sizeof(Selector.MaxElIndex), 0);
+	for (int32 i = 0; i < Selector.MaxElIndex; ++i)
+	{        //--Recive003
+		send(s, (char*)&Selector.Elemental[i], sizeof(Selector.Elemental[i]), 0);
+	}
+
+
 	recv(s, (char*)&APSize, sizeof(APSize), 0);
 	UE_LOG(LogTemp, Warning, TEXT("%d"), APSize);
 	for (int32 i = 0; i < APSize - 1; ++i)
 	{
 		int len202=0;
+		//--Recive001
 		recv(s, (char*)&len202, sizeof(len202), 0);
+		//--Recive002
 		recv(s, (char*)&AP, len202, 0);
 		VAP.push_back(AP);
 	}
 	SAPData = VAP;
 	return VAP;
 }
+
+
 
 void TCPModule::TCPCunnect()
 {
