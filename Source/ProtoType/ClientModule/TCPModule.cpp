@@ -54,7 +54,7 @@ std::vector<APData> TCPModule::GetAPData(std::vector<float> Elemental)
 
 	recv(s, (char*)&APSize, sizeof(APSize), 0);
 	UE_LOG(LogTemp, Warning, TEXT("%d"), APSize);
-	for (int32 i = 0; i < APSize - 1; ++i)
+	for (int32 i = 0; i < APSize; ++i)
 	{
 		int len202=0;
 		//--Recive001

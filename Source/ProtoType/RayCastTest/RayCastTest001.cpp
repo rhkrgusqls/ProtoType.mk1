@@ -18,10 +18,33 @@ void ARayCastTest001::GetPoint(FVector2D LU, FVector2D LD, FVector2D RU, FVector
     //    /* item.latitude와 item.longitude를 X, Y좌표로 바꾸는 공식*/
     //        RayCast(GetWorld(), FVector(X, Y, 1000000), FVector(X, Y, -100));
     //}
+    MyTCPModule.TCPCunnect();
+    std::vector<float> lA;
+    lA.push_back(36.513564);
+
+    lA.push_back(126.225986);
+
+    lA.push_back(35.513564);
+
+    lA.push_back(128.225986);
+
+    lA.push_back(37.513564);
+
+    lA.push_back(126.225986);
+
+    lA.push_back(35.513564);
+
+    lA.push_back(128.225986);
+    for (const auto& item : MyTCPModule.GetAPData(lA)) {
+        UE_LOG(LogTemp, Warning, TEXT("%d"), item.ApartIndex);
+        RayCast(GetWorld(), FVector((item.latitude- 36.513564) * 100000000, (item.longitude- 127.225986)* 100000000, 10000000000), FVector((item.latitude - 36.513564) * 100000000, (item.longitude - 127.225986) * 100000000, -100));
+    }
 }
 
 void ARayCastTest001::RayCast(UObject* WorldContextObject, const FVector& StartLocation, const FVector& EndLocation)
 {
+
+    DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Red, false, 50.0f, 0, 100.0f);
     if (!WorldContextObject) return;
     FHitResult HitResult;
     FCollisionQueryParams QueryParams;
@@ -33,6 +56,8 @@ void ARayCastTest001::RayCast(UObject* WorldContextObject, const FVector& StartL
 
         UPrimitiveComponent* HitComponent = HitResult.GetComponent();
 
+
+
         if (HitComponent)
         {
             USkeletalMeshComponent* SkeletalMeshComponent = Cast<USkeletalMeshComponent>(HitComponent);
@@ -41,7 +66,7 @@ void ARayCastTest001::RayCast(UObject* WorldContextObject, const FVector& StartL
                 ChangeMaterialRGB(SkeletalMeshComponent, BoneName, FLinearColor{1.0f,0.0f,0.0f,1.0f});
             }
         }
-        DrawDebugLine(GetWorld(), HitResult.Location+FVector(0,0,10000.0f), HitResult.Location, FColor::Red, false, 5.0f, 0, 1.0f);
+        
     }
 }
 void ARayCastTest001::ChangeMaterialRGB(USkeletalMeshComponent* SkeletalMesh, FName BoneName, FLinearColor NewColor)
