@@ -45,7 +45,7 @@ void AMyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MyTCPModule.TCPCunnect();
+	//MyTCPModule.TCPCunnect();
 }
 
 // Called every frame
@@ -109,32 +109,27 @@ void AMyCharacter::RayCast(const FVector& StartLocation, const FVector& EndLocat
 			UStaticMeshComponent* HitStaticMesh = Cast<UStaticMeshComponent>(HitActor->GetComponentByClass(UStaticMeshComponent::StaticClass()));
 			if (HitStaticMesh)
 			{
-				// 기본 머티리얼을 얻기
+
 				UMaterialInterface* Material = HitStaticMesh->GetMaterial(0);
 
-				if (!Material)
+				if (Material)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("No material found on the static mesh component."));
-					return;
-				}
+					UMaterialInstanceDynamic* DynamicMaterialInstance = UMaterialInstanceDynamic::Create(Material, this);
+					if (DynamicMaterialInstance)
+					{
+						// 머티리얼 속성 설정 (예: 색상)
+						FLinearColor NewColor = FLinearColor::Red;
+						DynamicMaterialInstance->SetVectorParameterValue(FName("Color"), NewColor);
 
+						// 스태틱 메쉬 컴포넌트에 머티리얼 적용
+						HitStaticMesh->SetMaterial(0, DynamicMaterialInstance);
 
-				// 동적 머티리얼 인스턴스 생성
-				UMaterialInstanceDynamic* DynamicMaterialInstance = UMaterialInstanceDynamic::Create(Material, this);
-				if (DynamicMaterialInstance)
-				{
-					// 머티리얼 속성 설정 (예: 색상)
-					FLinearColor NewColor = FLinearColor::Red;
-					DynamicMaterialInstance->SetVectorParameterValue(FName("BaseColor"), NewColor);
-
-					// 스태틱 메쉬 컴포넌트에 머티리얼 적용
-					HitStaticMesh->SetMaterial(0, DynamicMaterialInstance);
-
-					UE_LOG(LogTemp, Warning, TEXT("Material applied successfully."));
-				}
-				else
-				{
-					UE_LOG(LogTemp, Warning, TEXT("Failed to create dynamic material instance."));
+						UE_LOG(LogTemp, Warning, TEXT("Material applied successfully."));
+					}
+					else
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Failed to create dynamic material instance."));
+					}
 				}
 			}
 			else

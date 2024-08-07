@@ -37,13 +37,13 @@ void ARayCastTest001::GetPoint(FVector2D LU, FVector2D LD, FVector2D RU, FVector
     lA.push_back(128.225986);
     for (const auto& item : MyTCPModule.GetAPData(lA)) {
         UE_LOG(LogTemp, Warning, TEXT("%d"), item.ApartIndex);
-        RayCast(GetWorld(), FVector((item.latitude- 36.513564) * 100000000, (item.longitude- 127.225986)* 100000000, 10000000000), FVector((item.latitude - 36.513564) * 100000000, (item.longitude - 127.225986) * 100000000, -100));
+        RayCast(FVector((item.latitude- 36.513564) * 100000000, (item.longitude- 127.225986)* 100000000, 10000000000), FVector((item.latitude - 36.513564) * 100000000, (item.longitude - 127.225986) * 100000000, -100));
     }
 }
 
-void ARayCastTest001::RayCast(UObject* WorldContextObject, const FVector& StartLocation, const FVector& EndLocation)
+void ARayCastTest001::RayCast(const FVector& StartLocation, const FVector& EndLocation)
 {
-
+    UObject* WorldContextObject = GetWorld();
     DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Red, false, 50.0f, 0, 100.0f);
     if (!WorldContextObject) return;
     FHitResult HitResult;
