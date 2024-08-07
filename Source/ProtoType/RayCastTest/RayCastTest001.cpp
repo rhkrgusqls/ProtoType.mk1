@@ -48,24 +48,48 @@ void ARayCastTest001::RayCast(const FVector& StartLocation, const FVector& EndLo
     if (!WorldContextObject) return;
     FHitResult HitResult;
     FCollisionQueryParams QueryParams;
-    bool bHit = WorldContextObject->GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_Visibility, QueryParams);
+    bool bHit = WorldContextObject->GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_GameTraceChannel2 /*ECC_Visibility*/, QueryParams);
     if (bHit)
     {
-        FVector HitLocation = HitResult.ImpactPoint;
-        FName BoneName = HitResult.BoneName;
-
         UPrimitiveComponent* HitComponent = HitResult.GetComponent();
+        AActor* HitActor = HitResult.GetActor();
 
-
-
-        if (HitComponent)
+        if (HitActor)
         {
-            USkeletalMeshComponent* SkeletalMeshComponent = Cast<USkeletalMeshComponent>(HitComponent);
-            if (SkeletalMeshComponent)
+            UStaticMeshComponent* HitStaticMesh = Cast<UStaticMeshComponent>(HitActor->GetComponentByClass(UStaticMeshComponent::StaticClass()));
+            if (HitStaticMesh)
             {
-                ChangeMaterialRGB(SkeletalMeshComponent, BoneName, FLinearColor{1.0f,0.0f,0.0f,1.0f});
+
+                UMaterialInterface* Material = HitStaticMesh->GetMaterial(0);
+
+                if (Material)
+                {
+                    UMaterialInstanceDynamic* DynamicMaterialInstance = UMaterialInstanceDynamic::Create(Material, this);
+                    if (DynamicMaterialInstance)
+                    {
+                        // 머티리얼 속성 설정 (예: 색상)
+                        FLinearColor NewColor = FLinearColor::Red;
+                        DynamicMaterialInstance->SetVectorParameterValue(FName("Color"), NewColor);
+
+                        // 스태틱 메쉬 컴포넌트에 머티리얼 적용
+                        HitStaticMesh->SetMaterial(0, DynamicMaterialInstance);
+
+                        UE_LOG(LogTemp, Warning, TEXT("Material applied successfully."));
+                    }
+                    else
+                    {
+                        UE_LOG(LogTemp, Warning, TEXT("Failed to create dynamic material instance."));
+                    }
+                }
+            }
+            else
+            {
+                UE_LOG(LogTemp, Warning, TEXT("No static mesh component found on the hit actor."));
             }
         }
+
+
+        DrawDebugLine(GetWorld(), HitResult.Location + FVector(0, 0, 10000.0f), HitResult.Location, FColor::Green, false, 5.0f, 0, 1.0f);
         
     }
 }
