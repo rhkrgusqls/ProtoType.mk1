@@ -14,10 +14,10 @@ struct SSelectorType
 struct APData
 {
     //std::vector<int> buildingName;
-    float latitude=0;
-    float longitude = 0;
-    int floorInfo = 0;
-    int ApartIndex = 0;
+    float latitude;
+    float longitude;
+    int floorInfo;
+    int ApartIndex;
 };
 
 struct SaleData

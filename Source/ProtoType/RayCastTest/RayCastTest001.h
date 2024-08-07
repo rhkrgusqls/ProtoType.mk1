@@ -17,6 +17,9 @@ class PROTOTYPE_API ARayCastTest001 : public AMyCharacter
 
 	virtual void GetPoint(FVector2D LU, FVector2D LD, FVector2D RU, FVector2D RD) override;
 
-	void RayCast(UObject* WorldContextObject, const FVector& StartLocation, const FVector& EndLocation);
+	virtual void RayCast(const FVector& StartLocation, const FVector& EndLocation) override;
 	void ChangeMaterialRGB(USkeletalMeshComponent* SkeletalMesh, FName BoneName, FLinearColor NewColor);
+
+	//UFUNCTION(BlueprintCallable, Category = "View")
+	//void TempRaycast();
 };

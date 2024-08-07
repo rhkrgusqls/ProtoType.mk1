@@ -43,6 +43,10 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "View")
 	FViewLocation GetCornerPoints();
 
+	UFUNCTION(BlueprintCallable, Category = "View")
+	void TempRayCast();
+
+	virtual void RayCast(const FVector& StartLocation, const FVector& EndLocation);
 	virtual void GetPoint(FVector2D LU, FVector2D LD, FVector2D RU, FVector2D RD);
 public:
 	// Sets default values for this character's properties
@@ -59,10 +63,14 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+
+
 	TCPModule& MyTCPModule = TCPModule::GetInstance();
 private:
 	bool bIsLeftClicking;
 	bool bIsRightClicking;
+
+
 
 
 
