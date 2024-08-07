@@ -88,7 +88,7 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 }
 
-void AMyCharacter::RayCast(const FVector& StartLocation, const FVector& EndLocation)
+void AMyCharacter::RayCast(const FVector& StartLocation, const FVector& EndLocation, int32 FloorInfo)
 {
 	UObject* WorldContextObject = GetWorld();
 	if (!WorldContextObject) return;

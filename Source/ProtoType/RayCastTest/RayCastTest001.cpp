@@ -37,12 +37,22 @@ void ARayCastTest001::GetPoint(FVector2D LU, FVector2D LD, FVector2D RU, FVector
     lA.push_back(128.225986);
     for (const auto& item : MyTCPModule.GetAPData(lA)) {
         UE_LOG(LogTemp, Warning, TEXT("%d"), item.ApartIndex);
-        RayCast(FVector((item.latitude- 36.513564) * 100000000, (item.longitude- 127.225986)* 100000000, 10000000000), FVector((item.latitude - 36.513564) * 100000000, (item.longitude - 127.225986) * 100000000, -100));
+        //RayCast(FVector((item.latitude- 36.513564) * 100000000, (item.longitude- 127.225986)* 100000000, 10000000000), FVector((item.latitude - 36.513564) * 100000000, (item.longitude - 127.225986) * 100000000, -100));
     }
 }
 
-void ARayCastTest001::RayCast(const FVector& StartLocation, const FVector& EndLocation)
+void ARayCastTest001::RayCast(const FVector& StartLocation, const FVector& EndLocation,int32 FloorInfo)
 {
+
+    // 머티리얼 속성 설정 (예: 색상)
+    FLinearColor NewColor;
+
+    if(FloorInfo<7) NewColor = FLinearColor::Green;
+    else if(FloorInfo < 14) NewColor = FLinearColor::Blue; 
+    else if (FloorInfo < 20) NewColor = FLinearColor::Red;
+    else NewColor = FLinearColor::Black;
+
+    
     UObject* WorldContextObject = GetWorld();
     DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Red, false, 50.0f, 0, 100.0f);
     if (!WorldContextObject) return;
@@ -67,8 +77,6 @@ void ARayCastTest001::RayCast(const FVector& StartLocation, const FVector& EndLo
                     UMaterialInstanceDynamic* DynamicMaterialInstance = UMaterialInstanceDynamic::Create(Material, this);
                     if (DynamicMaterialInstance)
                     {
-                        // 머티리얼 속성 설정 (예: 색상)
-                        FLinearColor NewColor = FLinearColor::Red;
                         DynamicMaterialInstance->SetVectorParameterValue(FName("Color"), NewColor);
 
                         // 스태틱 메쉬 컴포넌트에 머티리얼 적용
