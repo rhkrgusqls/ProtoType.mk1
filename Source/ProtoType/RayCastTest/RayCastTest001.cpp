@@ -6,6 +6,12 @@
 #include "Materials/MaterialInstanceDynamic.h"
 #include "ProtoType/ClientModule/TCPModule.h"
 
+
+#include <cmath>
+
+const double R = 6371000;
+const double DEG_TO_RAD = PI / 180.0;
+
 void ARayCastTest001::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
@@ -37,7 +43,18 @@ void ARayCastTest001::GetPoint(FVector2D LU, FVector2D LD, FVector2D RU, FVector
     lA.push_back(128.225986);
     for (const auto& item : MyTCPModule.GetAPData(lA)) {
         UE_LOG(LogTemp, Warning, TEXT("%d"), item.ApartIndex);
-        //RayCast(FVector((item.latitude- 36.513564) * 100000000, (item.longitude- 127.225986)* 100000000, 10000000000), FVector((item.latitude - 36.513564) * 100000000, (item.longitude - 127.225986) * 100000000, -100));
+
+
+
+        double Latitude;
+        double Longitude;
+
+        Latitude = item.latitude;
+        Longitude = item.longitude;
+        double x;
+        double y;
+        latLongToXY(Latitude, Longitude, x, y);
+        RayCast(FVector(x, y, 10000000000), FVector(x, y, -1000));
     }
 }
 
@@ -122,4 +139,40 @@ void ARayCastTest001::ChangeMaterialRGB(USkeletalMeshComponent* SkeletalMesh, FN
             }
         }
     }
+}
+
+void ARayCastTest001::latLongToXY(double latitude, double longitude, double& x, double& y)
+{
+    const double baseLatitude = 36.50476937;
+    const double baseLongitude = 127.2784241;
+
+
+
+    const double scaleX = -8691673.56;
+    const double scaleY = -10995829.86;
+
+    double phi0 = 36.50476937 * DEG_TO_RAD;
+    double lambda0 = 127.2784241 * DEG_TO_RAD;
+    double phi = latitude * DEG_TO_RAD;
+    double lambda = longitude * DEG_TO_RAD;
+
+    x = R * (lambda - lambda0) * cos(phi0) * 100 + 13167 - 3040 + 1000 + 1000;
+    y = -R * (phi - phi0) * 100 + 3073 + 6597 - 6000 - 200;
+}
+
+void ARayCastTest001::XYTolatLong(double x, double y, double& latitude, double& longitude)
+{
+    const double baseLatitude = 36.50476937;
+    const double baseLongitude = 127.2784241;
+
+    const double scaleX = -8691673.56;
+    const double scaleY = -10995829.86;
+    
+    double phi0 = baseLatitude * DEG_TO_RAD;
+    double lambda0 = baseLongitude * DEG_TO_RAD; 
+    double phi = phi0 - (y - 3470) / (R * 100);
+    double lambda = lambda0 + (x - 13127) / (R * cos(phi0) * 100);
+
+    latitude = phi / DEG_TO_RAD;
+    longitude = lambda / DEG_TO_RAD;
 }

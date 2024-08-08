@@ -20,7 +20,8 @@ class PROTOTYPE_API ARayCastTest001 : public AMyCharacter
 	UFUNCTION(BlueprintCallable, Category = "View")
 	virtual void RayCast(const FVector& StartLocation, const FVector& EndLocation,int32 FloorInfo = 10) override;
 	void ChangeMaterialRGB(USkeletalMeshComponent* SkeletalMesh, FName BoneName, FLinearColor NewColor);
-
+	void latLongToXY(double latitude, double longitude, double& x, double& y);
+	void XYTolatLong(double x, double y, double& latitude, double& longitude);
 	//UFUNCTION(BlueprintCallable, Category = "View")
 	//void TempRaycast();
 };
