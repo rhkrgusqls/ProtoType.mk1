@@ -42,14 +42,13 @@ std::vector<APData> TCPModule::GetAPData(std::vector<float> Elemental)
 	APData AP;
 	int APSize;
 	//--Recive001--Complite
+	ioctlsocket(s, FIONBIO, 0);
 	send(s, (char*)&Selector.Type, len, 0);
 	
 	//--Recive002
 	send(s, (char*)&Selector.MaxElIndex, sizeof(Selector.MaxElIndex), 0);
-	for (int32 i = 0; i < Selector.MaxElIndex; ++i)
-	{        //--Recive003
-		send(s, (char*)&Selector.Elemental[i], sizeof(Selector.Elemental[i]), 0);
-	}
+	send(s, (char*)&Selector.Elemental, sizeof(Selector.Elemental), 0);
+	
 
 
 	recv(s, (char*)&APSize, sizeof(APSize), 0);
