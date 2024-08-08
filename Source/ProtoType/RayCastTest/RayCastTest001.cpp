@@ -4,11 +4,22 @@
 #include "GameFramework/Actor.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Materials/MaterialInstanceDynamic.h"
+#include "Materials/MaterialInterface.h"
 #include "ProtoType/ClientModule/TCPModule.h"
 
 void ARayCastTest001::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+}
+
+ARayCastTest001::ARayCastTest001()
+{
+    static ConstructorHelpers::FObjectFinder<UMaterialInterface> MaterialFinder(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Sungwoo/M_DynamicInst.M_DynamicInst'"));
+
+    if (MaterialFinder.Succeeded())
+    {
+        InstMaterial = MaterialFinder.Object;
+    }
 }
 
 void ARayCastTest001::GetPoint(FVector2D LU, FVector2D LD, FVector2D RU, FVector2D RD)
@@ -58,7 +69,7 @@ void ARayCastTest001::RayCast(const FVector& StartLocation, const FVector& EndLo
     if (!WorldContextObject) return;
     FHitResult HitResult;
     FCollisionQueryParams QueryParams;
-    bool bHit = WorldContextObject->GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_GameTraceChannel2 /*ECC_Visibility*/, QueryParams);
+    bool bHit = WorldContextObject->GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_Visibility, QueryParams);
     if (bHit)
     {
         UPrimitiveComponent* HitComponent = HitResult.GetComponent();
@@ -66,18 +77,87 @@ void ARayCastTest001::RayCast(const FVector& StartLocation, const FVector& EndLo
 
         if (HitActor)
         {
+            if (HitComponent->GetCollisionObjectType() == ECC_GameTraceChannel1)//건물 맞을떄
+            {
+                ChangeBuildingMaterial(HitResult, NewColor);
+            }
+            else//바닥맞을떄
+            {
+                float SphereRadius = 1500.0f;
+                FHitResult SphereHitResult;
+                FCollisionQueryParams SphereQueryParams;
+                SphereQueryParams.AddIgnoredActor(this);
+                bool bResult = GetWorld()->SweepSingleByChannel(
+                    SphereHitResult,
+                    HitResult.ImpactPoint,
+                    HitResult.ImpactPoint + FVector(0, 0, 100.0f),
+                    FQuat::Identity,
+                    ECollisionChannel::ECC_EngineTraceChannel2,
+                    FCollisionShape::MakeSphere(SphereRadius),
+                    SphereQueryParams
+
+                );
+
+                if (bResult) {
+                    HitComponent = SphereHitResult.GetComponent();
+                    if (HitComponent->GetCollisionObjectType() == ECC_GameTraceChannel2)
+                    {
+                        ChangeBuildingMaterial(SphereHitResult, NewColor);
+                    }
+
+
+
+
+#if ENABLE_DRAW_DEBUG//디버그 모드에서만 디버그 캡슐 그리도록
+                    FVector TraceVec = FVector(0, 0, 100.f);
+                    FVector Center = HitResult.ImpactPoint + TraceVec * 0.5f;
+                    float HalfHeight = 50.f;
+                    FColor DrawColor = (HitComponent->GetCollisionObjectType() == ECC_GameTraceChannel1) ? FColor::Green : FColor::Red;
+                    float DebugLifeTime = 50.0f;
+
+                    DrawDebugCapsule(GetWorld(),
+                        Center,
+                        HalfHeight,
+                        SphereRadius,//radius
+                        FQuat::Identity,
+                        DrawColor,
+                        false,
+                        DebugLifeTime
+                    );
+
+#endif // ENABLE_DRAW_DEBUG//디버그 모드에서만 디버그 캡슐 그리도록
+                    if (bResult)
+                    {
+
+                    }
+                }
+            }
+        }
+
+
+        DrawDebugLine(GetWorld(), HitResult.Location + FVector(0, 0, 10000.0f), HitResult.Location, FColor::Green, false, 5.0f, 0, 1.0f);
+        
+    }
+}
+void ARayCastTest001::ChangeBuildingMaterial(FHitResult& HitResult, FLinearColor InNewColor)
+{
+    UPrimitiveComponent* HitComponent = HitResult.GetComponent();
+    AActor* HitActor = HitResult.GetActor();
+    if (HitActor)
+    {
+        if (HitComponent->GetCollisionObjectType() == ECC_GameTraceChannel1)
+        {
             UStaticMeshComponent* HitStaticMesh = Cast<UStaticMeshComponent>(HitActor->GetComponentByClass(UStaticMeshComponent::StaticClass()));
+
             if (HitStaticMesh)
             {
 
-                UMaterialInterface* Material = HitStaticMesh->GetMaterial(0);
-
-                if (Material)
+                if (InstMaterial)
                 {
-                    UMaterialInstanceDynamic* DynamicMaterialInstance = UMaterialInstanceDynamic::Create(Material, this);
+                    UMaterialInstanceDynamic* DynamicMaterialInstance = UMaterialInstanceDynamic::Create(InstMaterial, this);
                     if (DynamicMaterialInstance)
                     {
-                        DynamicMaterialInstance->SetVectorParameterValue(FName("Color"), NewColor);
+                        DynamicMaterialInstance->SetVectorParameterValue(FName("Color"), InNewColor);
 
                         // 스태틱 메쉬 컴포넌트에 머티리얼 적용
                         HitStaticMesh->SetMaterial(0, DynamicMaterialInstance);
@@ -95,11 +175,8 @@ void ARayCastTest001::RayCast(const FVector& StartLocation, const FVector& EndLo
                 UE_LOG(LogTemp, Warning, TEXT("No static mesh component found on the hit actor."));
             }
         }
-
-
-        DrawDebugLine(GetWorld(), HitResult.Location + FVector(0, 0, 10000.0f), HitResult.Location, FColor::Green, false, 5.0f, 0, 1.0f);
-        
     }
+
 }
 void ARayCastTest001::ChangeMaterialRGB(USkeletalMeshComponent* SkeletalMesh, FName BoneName, FLinearColor NewColor)
 {

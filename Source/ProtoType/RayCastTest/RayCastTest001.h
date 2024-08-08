@@ -15,11 +15,19 @@ class PROTOTYPE_API ARayCastTest001 : public AMyCharacter
 	GENERATED_BODY()
 	virtual void Tick(float DeltaTime)override;
 
+	ARayCastTest001();
+
+
 	virtual void GetPoint(FVector2D LU, FVector2D LD, FVector2D RU, FVector2D RD) override;
 
 	UFUNCTION(BlueprintCallable, Category = "View")
 	virtual void RayCast(const FVector& StartLocation, const FVector& EndLocation,int32 FloorInfo = 10) override;
+
+	void ChangeBuildingMaterial(FHitResult& HitResult, FLinearColor InNewColor);
 	void ChangeMaterialRGB(USkeletalMeshComponent* SkeletalMesh, FName BoneName, FLinearColor NewColor);
+
+
+	UMaterialInterface* InstMaterial;
 
 	//UFUNCTION(BlueprintCallable, Category = "View")
 	//void TempRaycast();

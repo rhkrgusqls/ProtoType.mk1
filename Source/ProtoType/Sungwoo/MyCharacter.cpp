@@ -45,7 +45,7 @@ void AMyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MyTCPModule.TCPCunnect();
+	//MyTCPModule.TCPCunnect();
 }
 
 // Called every frame
