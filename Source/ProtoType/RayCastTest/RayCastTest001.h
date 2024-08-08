@@ -27,7 +27,12 @@ class PROTOTYPE_API ARayCastTest001 : public AMyCharacter
 	void ChangeMaterialRGB(USkeletalMeshComponent* SkeletalMesh, FName BoneName, FLinearColor NewColor);
 
 
+
 	UMaterialInterface* InstMaterial;
+
+
+	void latLongToXY(double latitude, double longitude, double& x, double& y);
+	void XYTolatLong(double x, double y, double& latitude, double& longitude);
 
 	//UFUNCTION(BlueprintCallable, Category = "View")
 	//void TempRaycast();
