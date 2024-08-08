@@ -21,7 +21,7 @@ public:
     TCPModule(const TCPModule&) = delete;
     TCPModule& operator=(const TCPModule&) = delete;
     void TCPCunnect();
-    std::vector<APData> GetAPData();
+    std::vector<APData> GetAPData(std::vector<float> Elemental);
 
 private:
     TCPModule() {};
@@ -32,6 +32,6 @@ private:
     SOCKET s;
     WSADATA wsaData;
     SOCKADDR_IN addr;
-    char buffer[256];
+    char buffer[1024];
     int len = 0;
 };

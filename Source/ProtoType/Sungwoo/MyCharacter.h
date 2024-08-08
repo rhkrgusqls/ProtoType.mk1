@@ -6,7 +6,9 @@
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "ViewLocationStruct.h"
+#include "ProtoType/ClientModule/TCPModule.h"
 #include "MyCharacter.generated.h"
+
 
 UCLASS()
 class PROTOTYPE_API AMyCharacter : public ACharacter
@@ -40,10 +42,16 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "View")
 	FViewLocation GetCornerPoints();
+
+	UFUNCTION(BlueprintCallable, Category = "View")
+	void TempRayCast();
+
+	virtual void RayCast(const FVector& StartLocation, const FVector& EndLocation, int32 FloorInfo = 10);
+	virtual void GetPoint(FVector2D LU, FVector2D LD, FVector2D RU, FVector2D RD);
 public:
 	// Sets default values for this character's properties
 	AMyCharacter();
-
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -56,9 +64,15 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 
+
+	TCPModule& MyTCPModule = TCPModule::GetInstance();
 private:
 	bool bIsLeftClicking;
 	bool bIsRightClicking;
+
+
+
+
 
 
 };

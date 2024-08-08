@@ -7,9 +7,10 @@
 #include "EnhancedInputComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Engine/Classes/Components/StaticMeshComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
-
 
 
 // Sets default values
@@ -43,7 +44,8 @@ AMyCharacter::AMyCharacter()
 void AMyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	MyTCPModule.TCPCunnect();
 }
 
 // Called every frame
@@ -85,6 +87,61 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	}
 
 }
+
+void AMyCharacter::RayCast(const FVector& StartLocation, const FVector& EndLocation, int32 FloorInfo)
+{
+	UObject* WorldContextObject = GetWorld();
+	if (!WorldContextObject) return;
+
+	FHitResult HitResult;
+	FCollisionQueryParams QueryParams;
+	bool bHit = WorldContextObject->GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_Visibility, QueryParams);
+
+	DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Red, false, 5.0f, 0, 1.0f);
+
+	if (bHit)
+	{
+		UPrimitiveComponent* HitComponent = HitResult.GetComponent();
+		AActor* HitActor = HitResult.GetActor();
+
+		if (HitActor)
+		{
+			UStaticMeshComponent* HitStaticMesh = Cast<UStaticMeshComponent>(HitActor->GetComponentByClass(UStaticMeshComponent::StaticClass()));
+			if (HitStaticMesh)
+			{
+
+				UMaterialInterface* Material = HitStaticMesh->GetMaterial(0);
+
+				if (Material)
+				{
+					UMaterialInstanceDynamic* DynamicMaterialInstance = UMaterialInstanceDynamic::Create(Material, this);
+					if (DynamicMaterialInstance)
+					{
+						// 머티리얼 속성 설정 (예: 색상)
+						FLinearColor NewColor = FLinearColor::Red;
+						DynamicMaterialInstance->SetVectorParameterValue(FName("Color"), NewColor);
+
+						// 스태틱 메쉬 컴포넌트에 머티리얼 적용
+						HitStaticMesh->SetMaterial(0, DynamicMaterialInstance);
+
+						UE_LOG(LogTemp, Warning, TEXT("Material applied successfully."));
+					}
+					else
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Failed to create dynamic material instance."));
+					}
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("No static mesh component found on the hit actor."));
+			}
+		}
+
+		DrawDebugLine(GetWorld(), HitResult.Location + FVector(0, 0, 10000.0f), HitResult.Location, FColor::Green, false, 5.0f, 0, 1.0f);
+	}
+}
+
 
 void AMyCharacter::QuaterMove(const FInputActionValue& Value)
 {
@@ -244,7 +301,21 @@ FViewLocation AMyCharacter::GetCornerPoints()
 			}
 		}
 	}
+	GetPoint(ViewLocation.LeftUp, ViewLocation.LeftDown, ViewLocation.RightUp, ViewLocation.RightDown);
 	return ViewLocation;
+}
+
+void AMyCharacter::TempRayCast()
+{
+	FVector StartLocation = GetActorLocation();
+	FVector Direction = GetActorForwardVector();
+	FVector EndLocation = StartLocation + (Direction * 1000.0f);
+	RayCast(StartLocation, EndLocation);
+}
+
+void AMyCharacter::GetPoint(FVector2D LU, FVector2D LD, FVector2D RU, FVector2D RD)
+{
+
 }
 
 

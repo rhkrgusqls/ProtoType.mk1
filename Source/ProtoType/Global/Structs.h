@@ -6,17 +6,18 @@
 struct SSelectorType
 {
     int Type = 0;
-    std::vector<int> Elemental;
+    int MaxElIndex = 0;
+    float Elemental[8];
     int error = 0;
 };
 
 struct APData
 {
     //std::vector<int> buildingName;
-    float latitude=0;
-    float longitude = 0;
-    int floorInfo = 0;
-    int ApartIndex = 0;
+    float latitude;
+    float longitude;
+    int floorInfo;
+    int ApartIndex;
 };
 
 struct SaleData

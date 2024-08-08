@@ -20,7 +20,23 @@ void ATCPTestActor::BeginPlay()
 	Super::BeginPlay();
 	TCPModule& MyTCPModule = TCPModule::GetInstance();
 	MyTCPModule.TCPCunnect();
-	for (const auto& item : MyTCPModule.GetAPData()) {
+	std::vector<float> lA;
+	lA.push_back(36.513564);
+
+	lA.push_back(126.225986);
+
+	lA.push_back(35.513564);
+
+	lA.push_back(128.225986);
+
+	lA.push_back(37.513564);
+
+	lA.push_back(126.225986);
+
+	lA.push_back(35.513564);
+
+	lA.push_back(128.225986);
+	for (const auto& item : MyTCPModule.GetAPData(lA)) {
 		UE_LOG(LogTemp, Warning, TEXT("%d"), item.ApartIndex);
 
 	}
