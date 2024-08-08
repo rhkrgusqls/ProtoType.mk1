@@ -38,14 +38,11 @@ std::vector<APData> TCPModule::GetAPData(std::vector<float> Elemental)
 	Selector.MaxElIndex = 8;
 
 	std::vector<APData> VAP;
-	len = sizeof(Selector);
+
 	APData AP;
 	int APSize;
 	//--Recive001--Complite
-	ioctlsocket(s, FIONBIO, 0);
-	send(s, (char*)&Selector.Type, len, 0);
-	
-	//--Recive002
+	send(s, (char*)&Selector.Type, sizeof(Selector.Type), 0);
 	send(s, (char*)&Selector.MaxElIndex, sizeof(Selector.MaxElIndex), 0);
 	send(s, (char*)&Selector.Elemental, sizeof(Selector.Elemental), 0);
 	
@@ -55,11 +52,7 @@ std::vector<APData> TCPModule::GetAPData(std::vector<float> Elemental)
 	UE_LOG(LogTemp, Warning, TEXT("%d"), APSize);
 	for (int32 i = 0; i < APSize; ++i)
 	{
-		int len202=0;
-		//--Recive001
-		recv(s, (char*)&len202, sizeof(len202), 0);
-		//--Recive002
-		recv(s, (char*)&AP, len202, 0);
+		recv(s, (char*)&AP, sizeof(AP), 0);
 		VAP.push_back(AP);
 	}
 	SAPData = VAP;

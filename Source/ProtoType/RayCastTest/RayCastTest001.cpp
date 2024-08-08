@@ -18,7 +18,7 @@ void ARayCastTest001::GetPoint(FVector2D LU, FVector2D LD, FVector2D RU, FVector
     //    /* item.latitude와 item.longitude를 X, Y좌표로 바꾸는 공식*/
     //        RayCast(GetWorld(), FVector(X, Y, 1000000), FVector(X, Y, -100));
     //}
-    MyTCPModule.TCPCunnect();
+
     std::vector<float> lA;
     lA.push_back(36.513564);
 
