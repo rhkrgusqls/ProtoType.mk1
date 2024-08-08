@@ -92,7 +92,7 @@ void ARayCastTest001::RayCast(const FVector& StartLocation, const FVector& EndLo
                     HitResult.ImpactPoint,
                     HitResult.ImpactPoint + FVector(0, 0, 100.0f),
                     FQuat::Identity,
-                    ECollisionChannel::ECC_EngineTraceChannel2,
+                    ECollisionChannel::ECC_GameTraceChannel3,
                     FCollisionShape::MakeSphere(SphereRadius),
                     SphereQueryParams
 
@@ -100,7 +100,7 @@ void ARayCastTest001::RayCast(const FVector& StartLocation, const FVector& EndLo
 
                 if (bResult) {
                     HitComponent = SphereHitResult.GetComponent();
-                    if (HitComponent->GetCollisionObjectType() == ECC_GameTraceChannel2)
+                    if (HitComponent->GetCollisionObjectType() == ECC_GameTraceChannel1)
                     {
                         ChangeBuildingMaterial(SphereHitResult, NewColor);
                     }
