@@ -13,7 +13,7 @@
 #pragma comment(lib, "ws2_32.lib")
 
 #define PORT	4960
-#define IP		"203.249.91.170"
+#define IP		"203.249.91.175"
 
 DEFINE_LOG_CATEGORY_STATIC(MyLogCategory, Warning, All);
 

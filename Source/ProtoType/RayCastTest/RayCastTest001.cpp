@@ -37,21 +37,40 @@ void ARayCastTest001::GetPoint(FVector2D LU, FVector2D LD, FVector2D RU, FVector
     //}
 
     std::vector<float> lA;
-    lA.push_back(36.513564);
 
-    lA.push_back(126.225986);
+    double latitude;
+    double longitude;
+    XYTolatLong(LU.X, LU.Y, latitude, longitude);//이순서대로 넣어야 됨 
+    lA.push_back(latitude);
+    lA.push_back(longitude);
 
-    lA.push_back(35.513564);
+    XYTolatLong(RU.X, RU.Y, latitude, longitude);
+    lA.push_back(latitude);
+    lA.push_back(longitude);
 
-    lA.push_back(128.225986);
+    XYTolatLong(RD.X, RD.Y, latitude, longitude);
+    lA.push_back(latitude);
+    lA.push_back(longitude);
 
-    lA.push_back(37.513564);
+    XYTolatLong(LD.X, LD.Y, latitude, longitude);
+    lA.push_back(latitude);
+    lA.push_back(longitude);
 
-    lA.push_back(126.225986);
+    //lA.push_back(36.513564);
 
-    lA.push_back(35.513564);
+    //lA.push_back(126.225986);
 
-    lA.push_back(128.225986);
+    //lA.push_back(35.513564);
+
+    //lA.push_back(128.225986);
+
+    //lA.push_back(37.513564);
+
+    //lA.push_back(126.225986);
+
+    //lA.push_back(35.513564);
+
+    //lA.push_back(128.225986);
     for (const auto& item : MyTCPModule.GetAPData(lA)) {
         UE_LOG(LogTemp, Warning, TEXT("%d"), item.ApartIndex);
 
@@ -73,12 +92,13 @@ void ARayCastTest001::RayCast(const FVector& StartLocation, const FVector& EndLo
 {
 
     // 머티리얼 속성 설정 (예: 색상)
-    FLinearColor NewColor;
+    int32 MaxFloorInfo =20 ;//최고점 값
+    FLinearColor NewColor = GetSpectrumColor(FloorInfo, MaxFloorInfo);
 
-    if(FloorInfo<7) NewColor = FLinearColor::Green;
-    else if(FloorInfo < 14) NewColor = FLinearColor::Blue; 
-    else if (FloorInfo < 20) NewColor = FLinearColor::Red;
-    else NewColor = FLinearColor::Black;
+    //if(FloorInfo<7) NewColor = FLinearColor::Green;
+    //else if(FloorInfo < 14) NewColor = FLinearColor::Blue; 
+    //else if (FloorInfo < 20) NewColor = FLinearColor::Red;
+    //else NewColor = FLinearColor::Black;
 
     
     UObject* WorldContextObject = GetWorld();
@@ -100,7 +120,7 @@ void ARayCastTest001::RayCast(const FVector& StartLocation, const FVector& EndLo
             }
             else//바닥맞을떄
             {
-                float SphereRadius = 1500.0f;
+                float SphereRadius = 2000.0f;
                 FHitResult SphereHitResult;
                 FCollisionQueryParams SphereQueryParams;
                 SphereQueryParams.AddIgnoredActor(this);
@@ -216,6 +236,62 @@ void ARayCastTest001::ChangeMaterialRGB(USkeletalMeshComponent* SkeletalMesh, FN
             }
         }
     }
+}
+
+FLinearColor ARayCastTest001::GetSpectrumColor(float Value, int32 MaxValue)//색 value로 스펙트럼으로 구현 파>빨
+{
+    // Value should be in the range [0, 100]
+   // Map Value to the wavelength range [400, 700] nm
+    float Wavelength = FMath::Lerp(400.0f, 700.0f, float(Value / MaxValue));
+
+    float RGB_R = 0.0f;
+    float RGB_G = 0.0f;
+    float RGB_B = 0.0f;
+
+    if (Wavelength >= 400.0f && Wavelength <= 440.0f) {
+        RGB_R = -(Wavelength - 440.0f) / (440.0f - 400.0f);
+        RGB_G = 0.0f;
+        RGB_B = 1.0f;
+    }
+    else if (Wavelength > 440.0f && Wavelength <= 490.0f) {
+        RGB_R = 0.0f;
+        RGB_G = (Wavelength - 440.0f) / (490.0f - 440.0f);
+        RGB_B = 1.0f;
+    }
+    else if (Wavelength > 490.0f && Wavelength <= 510.0f) {
+        RGB_R = 0.0f;
+        RGB_G = 1.0f;
+        RGB_B = -(Wavelength - 510.0f) / (510.0f - 490.0f);
+    }
+    else if (Wavelength > 510.0f && Wavelength <= 580.0f) {
+        RGB_R = (Wavelength - 510.0f) / (580.0f - 510.0f);
+        RGB_G = 1.0f;
+        RGB_B = 0.0f;
+    }
+    else if (Wavelength > 580.0f && Wavelength <= 645.0f) {
+        RGB_R = 1.0f;
+        RGB_G = -(Wavelength - 645.0f) / (645.0f - 580.0f);
+        RGB_B = 0.0f;
+    }
+    else if (Wavelength > 645.0f && Wavelength <= 700.0f) {
+        RGB_R = 1.0f;
+        RGB_G = 0.0f;
+        RGB_B = 0.0f;
+    }
+
+    // Apply intensity factor
+    float Intensity = 1.0f;
+    if (Wavelength > 700.0f || Wavelength < 400.0f) {
+        Intensity = 0.0f;
+    }
+    else if (Wavelength > 645.0f) {
+        Intensity = 0.3f + 0.7f * (700.0f - Wavelength) / (700.0f - 645.0f);
+    }
+    else if (Wavelength < 420.0f) {
+        Intensity = 0.3f + 0.7f * (Wavelength - 400.0f) / (420.0f - 400.0f);
+    }
+
+    return FLinearColor(RGB_R * Intensity, RGB_G * Intensity, RGB_B * Intensity);
 }
 
 void ARayCastTest001::latLongToXY(double latitude, double longitude, double& x, double& y)
