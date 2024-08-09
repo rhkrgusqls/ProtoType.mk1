@@ -26,6 +26,8 @@ ARayCastTest001::ARayCastTest001()
     {
         InstMaterial = MaterialFinder.Object;
     }
+
+
 }
 
 void ARayCastTest001::GetPoint(FVector2D LU, FVector2D LD, FVector2D RU, FVector2D RD)
@@ -40,9 +42,12 @@ void ARayCastTest001::GetPoint(FVector2D LU, FVector2D LD, FVector2D RU, FVector
 
     double latitude;
     double longitude;
-    XYTolatLong(LU.X, LU.Y, latitude, longitude);//이순서대로 넣어야 됨 
+    double X, Y;
+    XYTolatLong(LU.X, LU.Y, latitude, longitude);//화면 돌리는거에 따라 값이 바뀌;ㅁ?
     lA.push_back(latitude);
     lA.push_back(longitude);
+    latLongToXY(latitude, longitude, X, Y);
+
 
     XYTolatLong(RU.X, RU.Y, latitude, longitude);
     lA.push_back(latitude);
@@ -78,13 +83,15 @@ void ARayCastTest001::GetPoint(FVector2D LU, FVector2D LD, FVector2D RU, FVector
 
         double Latitude;
         double Longitude;
+        int32 Floor;
 
         Latitude = item.latitude;
         Longitude = item.longitude;
+        Floor = item.floorInfo;
         double x;
         double y;
         latLongToXY(Latitude, Longitude, x, y);
-        RayCast(FVector(x, y, 10000000000), FVector(x, y, -1000));
+        RayCast(FVector(x, y, 10000000000), FVector(x, y, -1000), Floor);
     }
 }
 
@@ -92,7 +99,7 @@ void ARayCastTest001::RayCast(const FVector& StartLocation, const FVector& EndLo
 {
 
     // 머티리얼 속성 설정 (예: 색상)
-    int32 MaxFloorInfo =20 ;//최고점 값
+    int32 MaxFloorInfo =30 ;//최고점 값
     FLinearColor NewColor = GetSpectrumColor(FloorInfo, MaxFloorInfo);
 
     //if(FloorInfo<7) NewColor = FLinearColor::Green;
@@ -163,10 +170,7 @@ void ARayCastTest001::RayCast(const FVector& StartLocation, const FVector& EndLo
                     );
 
 #endif // ENABLE_DRAW_DEBUG//디버그 모드에서만 디버그 캡슐 그리도록
-                    if (bResult)
-                    {
 
-                    }
                 }
             }
         }
