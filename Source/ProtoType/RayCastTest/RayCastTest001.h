@@ -31,7 +31,7 @@ class PROTOTYPE_API ARayCastTest001 : public AMyCharacter
 	UMaterialInterface* InstMaterial;
 
 public:
-	FLinearColor GetSpectrumColor(float Value, int32 MaxValue);//색 스펙트럼
+	FLinearColor GetSpectrumColor(float Value, int32 MaxValue,int32 MinValue);//색 스펙트럼
 	void latLongToXY(double latitude, double longitude, double& x, double& y);
 	void XYTolatLong(double x, double y, double& latitude, double& longitude);
 

@@ -100,7 +100,8 @@ void ARayCastTest001::RayCast(const FVector& StartLocation, const FVector& EndLo
 
     // 머티리얼 속성 설정 (예: 색상)
     int32 MaxFloorInfo =30 ;//최고점 값
-    FLinearColor NewColor = GetSpectrumColor(FloorInfo, MaxFloorInfo);
+    int32 MinFloorInfo = 10;
+    FLinearColor NewColor = GetSpectrumColor(FloorInfo, MaxFloorInfo, MinFloorInfo);
 
     //if(FloorInfo<7) NewColor = FLinearColor::Green;
     //else if(FloorInfo < 14) NewColor = FLinearColor::Blue; 
@@ -242,11 +243,11 @@ void ARayCastTest001::ChangeMaterialRGB(USkeletalMeshComponent* SkeletalMesh, FN
     }
 }
 
-FLinearColor ARayCastTest001::GetSpectrumColor(float Value, int32 MaxValue)//색 value로 스펙트럼으로 구현 파>빨
+FLinearColor ARayCastTest001::GetSpectrumColor(float Value, int32 MaxValue, int32 MinValue)//색 value로 스펙트럼으로 구현 파>빨
 {
     // Value should be in the range [0, 100]
    // Map Value to the wavelength range [400, 700] nm
-    float Wavelength = FMath::Lerp(400.0f, 700.0f, float(Value / MaxValue));
+    float Wavelength = FMath::Lerp(400.0f, 700.0f, float((Value- MinValue) / (MaxValue- MinValue)));
 
     float RGB_R = 0.0f;
     float RGB_G = 0.0f;

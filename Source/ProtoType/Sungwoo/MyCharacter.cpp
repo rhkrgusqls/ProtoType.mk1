@@ -154,7 +154,7 @@ void AMyCharacter::QuaterMove(const FInputActionValue& Value)
 		if (Camera)
 		{
 
-			float Height = FMath::Clamp(GetActorLocation().Z * 0.005, 0, 500);
+			float Height = FMath::Clamp(GetActorLocation().Z * 0.005, 30, 5000);
 
 			FVector CameraForward = Camera->GetForwardVector();
 			FVector CameraRight = Camera->GetRightVector();
@@ -221,7 +221,7 @@ void AMyCharacter::OnRightClick(const FInputActionValue& Value)
 
 void AMyCharacter::UpDown(const FInputActionValue& Value)
 {
-	float Height =FMath::Clamp(GetActorLocation().Z * 0.1,0,1000);
+	float Height =FMath::Clamp(GetActorLocation().Z * 0.1,30,5000);
 	float Power = Value.Get<float>();
 	FVector CurrentLocation = GetActorLocation();
 	FVector NewLocation = CurrentLocation + FVector(0.0f, 0.0f, Power * Height); // 이동 속도를 조정합니다.
