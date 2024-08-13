@@ -40,9 +40,10 @@ void ARayCastTest001::GetPoint(FVector2D LU, FVector2D LD, FVector2D RU, FVector
 
     std::vector<float> lA;
 
-    double latitude;
-    double longitude;
-    double X, Y;
+    //double latitude;
+    //double longitude;
+    //double X, Y;
+    /*
     XYTolatLong(LU.X, LU.Y, latitude, longitude);//화면 돌리는거에 따라 값이 바뀌;ㅁ?
     lA.push_back(latitude);
     lA.push_back(longitude);
@@ -60,22 +61,22 @@ void ARayCastTest001::GetPoint(FVector2D LU, FVector2D LD, FVector2D RU, FVector
     XYTolatLong(LD.X, LD.Y, latitude, longitude);
     lA.push_back(latitude);
     lA.push_back(longitude);
+    */
+    lA.push_back(36.513564);
 
-    //lA.push_back(36.513564);
+    lA.push_back(126.225986);
 
-    //lA.push_back(126.225986);
+    lA.push_back(35.513564);
 
-    //lA.push_back(35.513564);
+    lA.push_back(128.225986);
 
-    //lA.push_back(128.225986);
+    lA.push_back(37.513564);
 
-    //lA.push_back(37.513564);
+    lA.push_back(126.225986);
 
-    //lA.push_back(126.225986);
+    lA.push_back(35.513564);
 
-    //lA.push_back(35.513564);
-
-    //lA.push_back(128.225986);
+    lA.push_back(128.225986);
     for (const auto& item : MyTCPModule.GetAPData(lA)) {
         UE_LOG(LogTemp, Warning, TEXT("%d"), item.ApartIndex);
 
