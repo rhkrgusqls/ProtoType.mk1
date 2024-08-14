@@ -42,11 +42,10 @@ void ARayCastTest001::GetPoint(FVector2D LU, FVector2D LD, FVector2D RU, FVector
 
     double latitude;
     double longitude;
-    double X, Y;
     XYTolatLong(LU.X, LU.Y, latitude, longitude);//화면 돌리는거에 따라 값이 바뀌;ㅁ?
     lA.push_back(latitude);
     lA.push_back(longitude);
-    latLongToXY(latitude, longitude, X, Y);
+
 
 
     XYTolatLong(RU.X, RU.Y, latitude, longitude);
@@ -329,7 +328,7 @@ void ARayCastTest001::XYTolatLong(double x, double y, double& latitude, double& 
     double phi0 = baseLatitude * DEG_TO_RAD;
     double lambda0 = baseLongitude * DEG_TO_RAD; 
     double phi = phi0 - (y - 3470) / (R * 100);
-    double lambda = lambda0 + (x - 13127) / (R * cos(phi0) * 100);
+    double lambda = lambda0 + (x - 12127) / (R * cos(phi0) * 100);
 
     latitude = phi / DEG_TO_RAD;
     longitude = lambda / DEG_TO_RAD;
